@@ -94,8 +94,8 @@ jobs:
     CI_Build: true
     SourceLinkEnabled: false
 
-  queue:
-    name: Hosted macOS
+  pool:
+    vmImage: 'macOS-10.13'
 
   steps:
   - checkout: self
