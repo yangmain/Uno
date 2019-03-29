@@ -21,7 +21,7 @@ jobs:
 
   - task: NuGetToolInstaller@0
     inputs:
-      versionSpec: 4.7.0
+      versionSpec: 4.9.1
       checkLatest: false
 
   - task: NuGetCommand@2
@@ -29,6 +29,7 @@ jobs:
       command: restore
       solution: src/Uno.UI.sln
       selectOrConfig: select
+      nugetConfigPath: src/nuget.config
       includeNuGetOrg: true
       verbosityRestore: Normal
 
@@ -173,6 +174,7 @@ jobs:
     inputs:
       command: restore
       solution: src/Uno.UI.sln
+      nugetConfigPath: src/nuget.config
       selectOrConfig: select
       includeNuGetOrg: true
       verbosityRestore: Normal
