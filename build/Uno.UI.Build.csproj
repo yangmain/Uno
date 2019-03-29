@@ -45,11 +45,7 @@
     <Warning Text="Building this project under Visual Studio has no effect." />
   </Target>
 
-  <Target Name="UnoCLIBuild" AfterTargets="Build" Condition="'$(BuildingInsideVisualStudio)'==''">
-    <CallTarget Targets="UnoBuild"/>
-  </Target>
-
-  <Target Name="UnoBuild" DependsOnTargets="GetVersion;UpdateFileVersions;UpdateTasksSHA" Condition="'$(BuildingInsideVisualStudio)'==''">
+  <Target Name="UnoBuild" AfterTargets="Build" DependsOnTargets="GetVersion;UpdateFileVersions;UpdateTasksSHA" Condition="'$(BuildingInsideVisualStudio)'==''">
     <Message Text="Building for $(Configuration) and $(Platform) BuildReason:$(BUILD_REASON) Version:$(GitVersion_FullSemVer)" />
 
     <CallTarget Targets="BuildCI" Condition="'$(Configuration)'=='Release' and $(_isWindows)" />
@@ -130,6 +126,14 @@
   </Target>
 
   <Target Name="GenerateDoc">
+    
+    <!-- Restore the nuget packages for the whole solution -->
+    <MSBuild Properties="Configuration=Release;VisualStudioVersion=15.0;CopyDSYM=False;InformationalVersion=$(GITVERSION_InformationalVersion);CI_Build=true;_IsCIBuild=true"
+             Projects="..\src\Uno.UI.sln"
+             Targets="Restore"
+             RebaseOutputs="false"
+             BuildInParallel="true" />
+    
     <MSBuild Properties="Configuration=Release;VisualStudioVersion=15.0"
 				Projects="..\src\Uno.UWPSyncGenerator\Uno.UWPSyncGenerator.csproj"
 				Targets="Restore;Build" />
@@ -175,7 +179,7 @@
     <Exec Command="$(NuGetBin) pack Uno.UI.Lottie.nuspec -Verbosity Detailed -Version &quot;$(GITVERSION_FullSemVer)&quot;" />
   </Target>
 
-  <Target Name="ValidatePackage" AfterTargets="UnoBuild">
+  <Target Name="ValidatePackage" AfterTargets="UnoBuild" Condition="'$(BuildingInsideVisualStudio)'==''">
     <Exec Command="dotnet tool install --global Uno.PackageDiff --version 1.0.0-dev.6" IgnoreExitCode="true" />
     <Exec Command="generatepkgdiff --base=Uno.UI --other=Uno.UI.$(GITVERSION_FullSemVer).nupkg --diffignore=PackageDiffIgnore.xml --outfile=$(OutputDir)\ApiDiff.$(GITVERSION_FullSemVer).md" />
   </Target>
