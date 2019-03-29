@@ -175,8 +175,7 @@ jobs:
       command: restore
       solution: src/Uno.UI.sln
       nugetConfigPath: src/nuget.config
-      selectOrConfig: select
-      includeNuGetOrg: true
+      includeNuGetOrg: false
       verbosityRestore: Normal
 
   - task: MSBuild@1
