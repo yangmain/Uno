@@ -176,6 +176,7 @@ jobs:
       solution: src/Uno.UI.sln
       nugetConfigPath: src/nuget.config
       includeNuGetOrg: false
+      disableParallelProcessing: true
       verbosityRestore: Normal
 
   - task: MSBuild@1
