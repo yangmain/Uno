@@ -108,7 +108,7 @@ jobs:
 
   - task: MSBuild@1
     inputs:
-      solution: Build/Uno.UI.proj
+      solution: Build/Uno.UI.Build.csproj
       msbuildLocationMethod: version
       msbuildVersion: latest
       msbuildArchitecture: x86
