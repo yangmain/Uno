@@ -112,11 +112,11 @@ jobs:
 
   - task: MSBuild@1
     inputs:
-      solution: Build/Uno.UI.proj
+      solution: src/SamplesApp/SamplesApp.macOS/SamplesApp.macOS.csproj
       msbuildLocationMethod: version
       msbuildVersion: latest
       msbuildArchitecture: x86
-      msbuildArguments: /r /p:CheckExclusions=True "/p:Configuration=Release" "/p:TargetFramework=xamarinmac20" /detailedsummary /bl:$(build.artifactstagingdirectory)/build-macos.binlog src/SamplesApp/SamplesApp.macOS/SamplesApp.macOS.csproj
+      msbuildArguments: /r /p:CheckExclusions=True "/p:Configuration=Release" "/p:TargetFramework=xamarinmac20" /detailedsummary /bl:$(build.artifactstagingdirectory)/build-macos.binlog
       clean: false
       maximumCpuCount: true
       restoreNugetPackages: false
