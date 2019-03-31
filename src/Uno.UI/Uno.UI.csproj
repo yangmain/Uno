@@ -204,7 +204,7 @@
 	</ItemGroup>
 
 	<Choose>
-		<When Condition="'$(MSBuildVersion)' &lt;= '15.9'">
+		<When Condition="'$(MSBuildVersion)' &lt; '16.0'">
 			<ItemGroup>
 				<PackageReference Include="System.Memory" />
 			</ItemGroup>
