@@ -116,7 +116,7 @@ jobs:
       msbuildLocationMethod: version
       msbuildVersion: latest
       msbuildArchitecture: x86
-      msbuildArguments: /r /p:CheckExclusions=True "/p:Configuration=Release" "/p:TargetFramework=xamarinmac20" /detailedsummary /bl:$(build.artifactstagingdirectory)/build-macos.binlog
+      msbuildArguments: /r /p:CheckExclusions=True "/p:Configuration=Release" "/p:TargetFramework=xamarinios10" /detailedsummary /bl:$(build.artifactstagingdirectory)/build-macos.binlog
       clean: false
       maximumCpuCount: true
       restoreNugetPackages: false
