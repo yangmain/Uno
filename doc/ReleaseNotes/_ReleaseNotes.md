@@ -5,6 +5,7 @@
 ### Features
 
 ### Breaking Changes
+* The `WebAssemblyRuntime.InvokeJSUnmarshalled` method with three parameters has been removed.
 
 ### Bug fixes
 
