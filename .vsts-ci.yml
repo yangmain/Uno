@@ -112,7 +112,7 @@ jobs:
 
   - task: MSBuild@1
     inputs:
-      solution: src/SamplesApp/SamplesApp.macOS/SamplesApp.macOS.csproj
+      solution: src/Uno.UI/Uno.UI.csproj
       msbuildLocationMethod: version
       msbuildVersion: latest
       msbuildArchitecture: x86
