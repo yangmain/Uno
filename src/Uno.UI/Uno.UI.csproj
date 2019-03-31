@@ -204,12 +204,12 @@
 	</ItemGroup>
 
 	<Choose>
-		<When Condition="'$(VisualStudioVersion)'=='15.0'">
+		<When Condition="'$(MSBuildVersion)' &lt;= '15.9'">
 			<ItemGroup>
 				<PackageReference Include="System.Memory" />
 			</ItemGroup>
 		</When>
-		<When Condition="'$(VisualStudioVersion)'=='16.0'">
+		<When Condition="'$(MSBuildVersion)'&gt;='16.0'">
 			<ItemGroup Condition="'$(TargetFramework)' == 'MonoAndroid80' or '$(TargetFramework)' == 'MonoAndroid90' or '$(TargetFramework)' == 'xamarinios10' or '$(TargetFramework)'=='xamarinmac20'">
 				<Reference Include="System.Memory" />
 			</ItemGroup>
