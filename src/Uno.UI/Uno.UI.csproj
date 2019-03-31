@@ -191,7 +191,7 @@
 			<TreatAsPackageReference>false</TreatAsPackageReference>
 		</ProjectReference>
 		<ProjectReference Include="..\SourceGenerators\System.Xaml\Uno.Xaml.csproj" />
-		 <ProjectReference Include="..\Uno.UI.BindingHelper.Android\Uno.UI.BindingHelper.Android.csproj" Condition="$(IsMonoAndroid)">
+		 <ProjectReference Include="..\Uno.UI.BindingHelper.Android\Uno.UI.BindingHelper.Android.csproj" Condition="'$(TargetFramework)' == 'MonoAndroid80' or '$(TargetFramework)' == 'MonoAndroid90'">
 			<TreatAsPackageReference>false</TreatAsPackageReference>
 		</ProjectReference> 
 	</ItemGroup>
@@ -202,10 +202,22 @@
 		<Reference Include="System.json" />
 		<Reference Include="System.Memory" />
 	</ItemGroup>
-	
-	<ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0' or '$(TargetFramework)'=='net461'">
-		<PackageReference Include="System.Memory" />
-	</ItemGroup>
+
+	<Choose>
+		<When Condition="'$(VisualStudioVersion)'=='15.0'">
+			<ItemGroup>
+				<PackageReference Include="System.Memory" />
+			</ItemGroup>
+		</When>
+		<When Condition="'$(VisualStudioVersion)'=='16.0'">
+			<ItemGroup Condition="'$(TargetFramework)' == 'MonoAndroid80' or '$(TargetFramework)' == 'MonoAndroid90' or '$(TargetFramework)' == 'xamarinios10' or '$(TargetFramework)'=='xamarinmac20'">
+				<Reference Include="System.Memory" />
+			</ItemGroup>
+			<ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0' or '$(TargetFramework)'=='net461'">
+				<PackageReference Include="System.Memory" />
+			</ItemGroup>
+		</When>
+	</Choose>
 
 	<ItemGroup>
 		<MixinInput Include=".\Mixins\Android\BaseActivity.Callbacks.tt" />
