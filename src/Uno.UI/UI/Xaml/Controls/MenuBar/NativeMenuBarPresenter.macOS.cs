@@ -21,16 +21,50 @@ namespace Windows.UI.Xaml.Controls
 		{
 			_menuBar = this.FindFirstParent<MenuBar>() ?? throw new InvalidOperationException($"MenuBarPresenter must be used with a MenuBar control");
 
-			var platformItems = _menuBar.Items.Select(i =>
-			{
-				var platformItem = new NSMenuItem(i.Title);
-				platformItem.Activated += PlatformItem_Activated;
-				return platformItem;
-			}).ToArray();
+			NSMenu menubar = new NSMenu();
 
-			NSApplication.SharedApplication.MainMenu.Items = platformItems;
+			foreach (var item in _menuBar.Items)
+			{
+				NSMenuItem appMenuItem = new NSMenuItem(item.Title);
+				menubar.AddItem(appMenuItem);
+
+				AddSubMenus(appMenuItem, item);
+			}
+
+			NSApplication.SharedApplication.MainMenu = menubar;
 		}
 
-		private void PlatformItem_Activated(object sender, EventArgs e) => throw new NotImplementedException();
+		private void AddSubMenus(NSMenuItem platformItem, MenuBarItem item)
+		{
+			if (item.Items.Any())
+			{
+				platformItem.Submenu = new NSMenu();
+
+				foreach (var subItem in item.Items)
+				{
+					NSMenuItem subPlatformItem = null;
+					switch (subItem)
+					{
+						case MenuFlyoutSubItem flyoutSubItem:
+							platformItem.Submenu.AddItem(subPlatformItem = new NSMenuItem(flyoutSubItem.Text));
+							break;
+
+						case MenuFlyoutItem flyoutItem:
+							platformItem.Submenu.AddItem(subPlatformItem = new NSMenuItem(flyoutItem.Text));
+							break;
+					}
+
+					//if (subPlatformItem != null)
+					//{
+					//	AddSubMenus(subPlatformItem, subItem);
+				//}
+				}
+			}
+		}
+
+		private void PlatformItem_Activated(object sender, EventArgs e) 
+		{
+			Console.WriteLine("Item activated");
+		}
 	}
 }

@@ -3,9 +3,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Markup;
 
 namespace Windows.UI.Xaml.Controls
 {
+	[ContentProperty(Name="Items")]
 	public partial class MenuBar : Control
 	{
 		private Grid m_layoutRoot;

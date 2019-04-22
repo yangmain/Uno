@@ -7,8 +7,24 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	mc:Ignorable="d">
 	
-	<Grid Padding="12">
-	 	<controls:SampleChooserControl x:Name="sampleControl" Visibility="Collapsed" />
+	<Grid Padding="12">""
+		<MenuBar Style="{StaticResource NativeMenuBar}">
+			<MenuBarItem Title="App">
+				<MenuFlyoutSubItem Text="New">
+            		<MenuFlyoutItem Text="Plain Text Document"/>
+            		<MenuFlyoutItem Text="Rich Text Document"/>
+            		<MenuFlyoutItem Text="Other Formats..."/>
+        		</MenuFlyoutSubItem>
+			</MenuBarItem>
+			<MenuBarItem Title="Edit">
+        		<MenuFlyoutItem Text="Undo"/>
+       			<MenuFlyoutItem Text="Cut"/>
+        		<MenuFlyoutItem Text="Copy"/>
+       			<MenuFlyoutItem Text="Paste"/>
+    		</MenuBarItem>
+			<MenuBarItem Title="Edit" />
+		</MenuBar>
+
 		<StackPanel>
 			<TextBlock Text="test test" FontSize="64" />
 			<Button Content="My Button" FontSize="64" />
