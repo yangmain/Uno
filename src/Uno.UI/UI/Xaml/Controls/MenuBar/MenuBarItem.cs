@@ -47,17 +47,18 @@ namespace Windows.UI.Xaml.Controls
 			PopulateContent();
 			AttachEventHandlers();
 
+
 			m_menuBar = SharedHelpers.GetAncestorOfType<MenuBar>(VisualTreeHelper.GetParent(this));
 		}
 
 		private void PopulateContent()
 		{
 			// Create flyout
-			MenuBarItemFlyout flyout = new MenuBarItemFlyout();
+			var flyout = new MenuBarItemFlyout();
 
-			foreach (MenuFlyoutItemBase flyoutItem in Items)
+			foreach (var flyoutItem in Items)
 			{
-				flyout.Items.Add(flyoutItem);
+				flyout.Items.Add((MenuFlyoutItem)flyoutItem);
 			}
 
 			flyout.Placement = FlyoutPlacementMode.Bottom;
@@ -92,10 +93,12 @@ namespace Windows.UI.Xaml.Controls
 			{
 				m_flyout.Closed += OnFlyoutClosed;
 				m_flyout.Opening += OnFlyoutOpening;
+				m_flyout.m_presenter.KeyDown += OnPresenterKeyDown;
 
 				d.Add(() => {
 					m_flyout.Closed -= OnFlyoutClosed;
 					m_flyout.Opening -= OnFlyoutOpening;
+					m_flyout.m_presenter.KeyDown -= OnPresenterKeyDown;
 				});
 			}
 
@@ -152,7 +155,7 @@ namespace Windows.UI.Xaml.Controls
 			}
 		}
 
-		private void OnPresenterKeyDown(DependencyObject sender, KeyRoutedEventArgs args)
+		private void OnPresenterKeyDown(object sender, KeyRoutedEventArgs args)
 		{
 			var key = args.Key;
 			if (key == VirtualKey.Right)
@@ -187,7 +190,7 @@ namespace Windows.UI.Xaml.Controls
 				switch (e.CollectionChange)
 				{
 					case CollectionChange.ItemInserted:
-						m_flyout.Items.Insert(index, Items[(int)index]);
+						m_flyout.Items.Insert((int)index, (MenuFlyoutItem)Items[(int)index]);
 						break;
 					case CollectionChange.ItemRemoved:
 						m_flyout.Items.RemoveAt((int)index);
@@ -217,19 +220,15 @@ namespace Windows.UI.Xaml.Controls
 					// Sets an exclusion rect over the button that generates the flyout so that even if the menu opens upwards
 					// (which is the default in touch mode) it doesn't cover the menu bar button.
 					FlyoutShowOptions options = new FlyoutShowOptions();
-					options.Position = new Point(0, height));
-					options.Placement = FlyoutPlacementMode.Bottom);
-					options.ExclusionRect = new Rect(0, 0, width, height));
+					options.Position = new Point(0, height);
+					options.Placement = FlyoutPlacementMode.Bottom;
+					options.ExclusionRect = new Rect(0, 0, width, height);
 					m_flyout.ShowAt(m_button, options);
 				}
 				else
 				{
 					m_flyout.ShowAt(m_button, new Point(0, height));
 				}
-
-				// Attach keyboard event handler
-				var presenter = m_flyout.m_presenter;
-				m_presenterKeyDownRevoker = presenter.KeyDown(var_revoke, { this,  &MenuBarItem.OnPresenterKeyDown });
 			}
 		}
 
@@ -331,67 +330,5 @@ namespace Windows.UI.Xaml.Controls
 				}
 			}
 		}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		public  string Title
-		{
-			get
-			{
-				return (string)this.GetValue(TitleProperty);
-			}
-			set
-			{
-				this.SetValue(TitleProperty, value);
-			}
-		}
-
-		public  IList<MenuFlyoutItemBase> Items
-		{
-			get
-			{
-				return (IList<MenuFlyoutItemBase>)this.GetValue(ItemsProperty);
-			}
-		}
-
-		public static DependencyProperty ItemsProperty { get; } = 
-		Windows.UI.Xaml.DependencyProperty.Register(
-			"Items", typeof(IList<MenuFlyoutItemBase>), 
-			typeof(MenuBarItem), 
-			new FrameworkPropertyMetadata(default(IList<MenuFlyoutItemBase>)));
-
-		public static DependencyProperty TitleProperty { get; } = 
-		Windows.UI.Xaml.DependencyProperty.Register(
-			"Title", typeof(string), 
-			typeof(MenuBarItem), 
-			new FrameworkPropertyMetadata(default(string)));
 	}
 }

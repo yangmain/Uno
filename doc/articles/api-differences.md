@@ -37,3 +37,6 @@ The Xaml styles uno are currently supporting two levels: global and local a Xaml
 Overriding implicit styles is currently not supported.
 
 Theme resources are also considered as `StaticResource`.
+
+## Other differences
+- `MenuFlyout.Items` should be `MenuFlyoutItemBase` but is `MenuFlyoutItem`.

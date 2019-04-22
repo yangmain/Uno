@@ -61,8 +61,6 @@ namespace Uno.UI.Extensions
 					&& screenLocation.X < bounds.Right
 					&& screenLocation.Y < bounds.Bottom;
 			}
-
-			return false;
 #endif
 		}
 

@@ -338,38 +338,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="UI\Xaml\Controls\MenuBar\MenuBar.xaml" />
-	  <None Remove="UI\Xaml\Controls\MenuBar\MenuBarItem.xaml" />
-	  <None Remove="UI\Xaml\Controls\MenuBar\MenuBar_themeresources.xaml" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <UpToDateCheckInput Remove="UI\Xaml\Controls\MenuBar\FlyoutLocation.cs" />
-	  <UpToDateCheckInput Remove="UI\Xaml\Controls\MenuBar\MenuBar.cs" />
-	  <UpToDateCheckInput Remove="UI\Xaml\Controls\MenuBar\MenuBar.xaml" />
-	  <UpToDateCheckInput Remove="UI\Xaml\Controls\MenuBar\MenuBarItem.cs" />
-	  <UpToDateCheckInput Remove="UI\Xaml\Controls\MenuBar\MenuBarItem.xaml" />
-	  <UpToDateCheckInput Remove="UI\Xaml\Controls\MenuBar\MenuBarItemFlyout.cs" />
-	  <UpToDateCheckInput Remove="UI\Xaml\Controls\MenuBar\MenuBar_themeresources.xaml" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Page Include="UI\Xaml\Controls\MenuBar\MenuBar.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	  <Page Include="UI\Xaml\Controls\MenuBar\MenuBarItem.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	  <Page Include="UI\Xaml\Controls\MenuBar\MenuBar_themeresources.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Update="Mixins\net461\VisualStatesMixins.tt">
-			<Generator>TextTemplatingFileGenerator</Generator>
-			<LastGenOutput>VisualStatesMixins.g.cs</LastGenOutput>
-		</None>
+	  <UpToDateCheckInput Remove="UI\Xaml\Controls\MenuBar\NativeMenuBarPresenter.macOS.cs" />
 	</ItemGroup>
 
 	<Target Name="GetPackagingOutputs" Condition=" '$(TargetFramework)' == 'uap10.0' " />
