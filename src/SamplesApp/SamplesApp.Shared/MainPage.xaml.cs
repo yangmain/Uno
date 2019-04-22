@@ -9,6 +9,7 @@ namespace SamplesApp
 		{
 			this.InitializeComponent();
 
+			sampleControl.DataContext = new SampleChooserViewModel();
 		}
 
 		public void OnQuit(object sender, object args)

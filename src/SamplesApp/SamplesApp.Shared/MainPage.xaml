@@ -5,10 +5,11 @@
 	xmlns:controls="using:Uno.UI.Samples.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	mc:Ignorable="d">
+	xmlns:macos="http://uno.ui/macos"
+	mc:Ignorable="d macos">
 	
 	<Grid Padding="12">""
-		<MenuBar Style="{StaticResource NativeMenuBar}">
+		<!--<MenuBar Style="{StaticResource NativeMenuBar}">
 			<MenuBarItem Title="App">
 				<MenuFlyoutSubItem Text="New">
             		<MenuFlyoutItem Text="Plain Text Document"/>
@@ -34,6 +35,7 @@
 			<Slider />
 			<CheckBox Content="My Check"/>
 			<ToggleButton Content="My Toggle"/>
-		</StackPanel>
+		</StackPanel>-->
+		<controls:SampleChooserControl x:Name="sampleControl" />
 	</Grid>
 </Page>

@@ -39,7 +39,6 @@ namespace Windows.UI.Xaml.Controls
 
 				AddSubMenus(appMenuItem, item);
 			}
-
 		}
 
 		private void OnItemActivated(object sender, EventArgs e)

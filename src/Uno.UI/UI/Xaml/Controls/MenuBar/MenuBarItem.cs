@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Uno.Disposables;
@@ -23,6 +24,7 @@ namespace Windows.UI.Xaml.Controls
 		private Button m_button;
 		private bool m_isFlyoutOpen;
 		private DependencyObject m_passThroughElement;
+		private CompositeDisposable _activeDisposables;
 
 		public MenuBarItem()
 		{
@@ -33,6 +35,13 @@ namespace Windows.UI.Xaml.Controls
 			observableVector.VectorChanged += OnItemsVectorChanged;
 
 			SetValue(ItemsProperty, observableVector);
+
+			Loaded += MenuBarItem_Loaded;
+		}
+
+		private void MenuBarItem_Loaded(object sender, RoutedEventArgs e)
+		{
+			SynchronizeMenuBar();
 		}
 
 		// IUIElement / IUIElementOverridesHelper
@@ -49,9 +58,11 @@ namespace Windows.UI.Xaml.Controls
 			PopulateContent();
 			AttachEventHandlers();
 
-
-			m_menuBar = SharedHelpers.GetAncestorOfType<MenuBar>(VisualTreeHelper.GetParent(this));
+			SynchronizeMenuBar();
 		}
+
+		private void SynchronizeMenuBar()
+			=> m_menuBar = SharedHelpers.GetAncestorOfType<MenuBar>(VisualTreeHelper.GetParent(this));
 
 		private void PopulateContent()
 		{
@@ -60,7 +71,7 @@ namespace Windows.UI.Xaml.Controls
 
 			foreach (var flyoutItem in Items)
 			{
-				flyout.Items.Add((MenuFlyoutItem)flyoutItem);
+				flyout.Items.Add(flyoutItem);
 			}
 
 			flyout.Placement = FlyoutPlacementMode.Bottom;
@@ -83,44 +94,42 @@ namespace Windows.UI.Xaml.Controls
 		{
 			_registrations.Disposable = null;
 
-			var d = new CompositeDisposable();
+			_activeDisposables = new CompositeDisposable();
 
 			if(m_button != null)
 			{
-				d.Add(m_button.RegisterDisposablePropertyChangedCallback(ButtonBase.IsPressedProperty, OnVisualPropertyChanged));
-				d.Add(m_button.RegisterDisposablePropertyChangedCallback(ButtonBase.IsPointerOverProperty, OnVisualPropertyChanged));
+				_activeDisposables.Add(m_button.RegisterDisposablePropertyChangedCallback(ButtonBase.IsPressedProperty, OnVisualPropertyChanged));
+				_activeDisposables.Add(m_button.RegisterDisposablePropertyChangedCallback(ButtonBase.IsPointerOverProperty, OnVisualPropertyChanged));
 			}
 
 			if (m_flyout != null)
 			{
 				m_flyout.Closed += OnFlyoutClosed;
 				m_flyout.Opening += OnFlyoutOpening;
-				m_flyout.m_presenter.KeyDown += OnPresenterKeyDown;
 
-				d.Add(() => {
+				_activeDisposables.Add(() => {
 					m_flyout.Closed -= OnFlyoutClosed;
 					m_flyout.Opening -= OnFlyoutOpening;
-					m_flyout.m_presenter.KeyDown -= OnPresenterKeyDown;
 				});
 			}
 
 			PointerEntered += OnMenuBarItemPointerEntered;
-			d.Add(() => PointerEntered -= OnMenuBarItemPointerEntered);
+			_activeDisposables.Add(() => PointerEntered -= OnMenuBarItemPointerEntered);
 
 			var pointerPressHandler = new PointerEventHandler(OnMenuBarItemPointerPressed);
 			AddHandler(UIElement.PointerPressedEvent, pointerPressHandler, true);
 			var keyDownHandler = new KeyEventHandler(OnMenuBarItemKeyDown);
 			AddHandler(UIElement.KeyDownEvent, keyDownHandler, true);
 
-			d.Add(() => {
+			_activeDisposables.Add(() => {
 				RemoveHandler(UIElement.PointerPressedEvent, pointerPressHandler);
 				RemoveHandler(UIElement.KeyDownEvent, keyDownHandler);
 			});
 
 			AccessKeyInvoked += OnMenuBarItemAccessKeyInvoked;
-			d.Add(() => AccessKeyInvoked -= OnMenuBarItemAccessKeyInvoked);
+			_activeDisposables.Add(() => AccessKeyInvoked -= OnMenuBarItemAccessKeyInvoked);
 
-			_registrations.Disposable = d;
+			_registrations.Disposable = _activeDisposables;
 		}
 
 		// Event Handlers
@@ -212,6 +221,8 @@ namespace Windows.UI.Xaml.Controls
 		// Menu Flyout actions
 		private void ShowMenuFlyout()
 		{
+			Console.WriteLine("ShowMenuFlyout()");
+
 			if (m_button != null)
 			{
 				var width = m_button.ActualWidth;
@@ -229,7 +240,18 @@ namespace Windows.UI.Xaml.Controls
 				}
 				else
 				{
+					Console.WriteLine("-> m_flyout.ShowAt()");
 					m_flyout.ShowAt(m_button, new Point(0, height));
+					Console.WriteLine("<- m_flyout.ShowAt()");
+				}
+
+				if (m_flyout?.m_presenter != null)
+				{
+					m_flyout.m_presenter.KeyDown += OnPresenterKeyDown;
+
+					_activeDisposables.Add(() => {
+						m_flyout.m_presenter.KeyDown -= OnPresenterKeyDown;
+					});
 				}
 			}
 		}

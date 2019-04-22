@@ -28,7 +28,7 @@
 		</Setter>
 	</Style>
 
-	<Style x:Key="NativeMenuBar" TargetType="MenuBar">
+	<macos:Style x:Key="NativeMenuBar" TargetType="MenuBar">
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="local:MenuBar">
@@ -36,7 +36,8 @@
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
-	</Style>
+	</macos:Style>
 
+	<macos:Style TargetType="MenuBar" BasedOn="{StaticResource NativeMenuBar}"/>
 
 </ResourceDictionary>

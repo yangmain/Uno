@@ -61,7 +61,9 @@ namespace Windows.UI.Xaml.Controls
 
 		#endregion
 
-		public event global::Windows.UI.Xaml.RoutedEventHandler Click;
+#pragma warning disable CS0108
+		public event RoutedEventHandler Click;
+#pragma warning restore CS0108
 
 		internal void InvokeClick()
 		{
