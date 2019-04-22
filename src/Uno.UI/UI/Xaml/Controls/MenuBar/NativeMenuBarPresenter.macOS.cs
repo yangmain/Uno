@@ -15,6 +15,12 @@ namespace Windows.UI.Xaml.Controls
 		public NativeMenuBarPresenter()
 		{
 			Loaded += MenuBarPresenter_Loaded;
+			Unloaded += MenuBarPresenter_Unloaded;
+		}
+
+		private void MenuBarPresenter_Unloaded(object sender, RoutedEventArgs e)
+		{
+			NSApplication.SharedApplication.MainMenu = null;
 		}
 
 		private void MenuBarPresenter_Loaded(object sender, RoutedEventArgs e)
@@ -22,49 +28,72 @@ namespace Windows.UI.Xaml.Controls
 			_menuBar = this.FindFirstParent<MenuBar>() ?? throw new InvalidOperationException($"MenuBarPresenter must be used with a MenuBar control");
 
 			NSMenu menubar = new NSMenu();
+			menubar.AutoEnablesItems = false;
+
+			NSApplication.SharedApplication.MainMenu = menubar;
 
 			foreach (var item in _menuBar.Items)
 			{
-				NSMenuItem appMenuItem = new NSMenuItem(item.Title);
+				NSMenuItem appMenuItem = new NSMenuItem() { Enabled = true };
 				menubar.AddItem(appMenuItem);
 
 				AddSubMenus(appMenuItem, item);
 			}
 
-			NSApplication.SharedApplication.MainMenu = menubar;
+		}
+
+		private void OnItemActivated(object sender, EventArgs e)
+		{
+			Console.WriteLine("Activated");
 		}
 
 		private void AddSubMenus(NSMenuItem platformItem, MenuBarItem item)
 		{
+			platformItem.Submenu = new NSMenu(item.Title) { AutoEnablesItems = false };
+
 			if (item.Items.Any())
 			{
-				platformItem.Submenu = new NSMenu();
+				ProcessMenuItems(platformItem, item.Items);
+			}
+		}
 
-				foreach (var subItem in item.Items)
+		private void ProcessMenuItems(NSMenuItem platformItem, IList<MenuFlyoutItemBase> items)
+		{
+			if (items != null)
+			{
+
+				if(platformItem.Submenu == null)
 				{
-					NSMenuItem subPlatformItem = null;
+					platformItem.Submenu = new NSMenu();
+				}
+
+				foreach (var subItem in items)
+				{
 					switch (subItem)
 					{
 						case MenuFlyoutSubItem flyoutSubItem:
-							platformItem.Submenu.AddItem(subPlatformItem = new NSMenuItem(flyoutSubItem.Text));
+							var subPlatformItem = new NSMenuItem(flyoutSubItem.Text) { Enabled = true };
+							platformItem.Submenu.AddItem(subPlatformItem);
+							ProcessMenuItems(subPlatformItem, flyoutSubItem.Items);
 							break;
 
 						case MenuFlyoutItem flyoutItem:
-							platformItem.Submenu.AddItem(subPlatformItem = new NSMenuItem(flyoutItem.Text));
+							var subPlatformItem2 = new NSMenuItem(flyoutItem.Text, (s, e) => OnItemActivated(flyoutItem)) { Enabled = true };
+							flyoutItem.InvokeClick(); 
+							platformItem.Submenu.AddItem(subPlatformItem2);
+							break;
+
+						case MenuFlyoutSeparator separatorItem:
+							platformItem.Submenu.AddItem(NSMenuItem.SeparatorItem);
 							break;
 					}
-
-					//if (subPlatformItem != null)
-					//{
-					//	AddSubMenus(subPlatformItem, subItem);
-				//}
 				}
 			}
 		}
 
-		private void PlatformItem_Activated(object sender, EventArgs e) 
+		private void OnItemActivated(MenuFlyoutItem flyoutItem)
 		{
-			Console.WriteLine("Item activated");
+			flyoutItem.InvokeClick();
 		}
 	}
 }

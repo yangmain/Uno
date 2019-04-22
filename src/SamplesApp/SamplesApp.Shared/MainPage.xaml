@@ -15,6 +15,9 @@
             		<MenuFlyoutItem Text="Rich Text Document"/>
             		<MenuFlyoutItem Text="Other Formats..."/>
         		</MenuFlyoutSubItem>
+				<MenuFlyoutSeparator/>
+        		<MenuFlyoutItem Text="Preferences"/>
+        		<MenuFlyoutItem Text="Quit" Click="OnQuit"/>
 			</MenuBarItem>
 			<MenuBarItem Title="Edit">
         		<MenuFlyoutItem Text="Undo"/>
@@ -22,11 +25,11 @@
         		<MenuFlyoutItem Text="Copy"/>
        			<MenuFlyoutItem Text="Paste"/>
     		</MenuBarItem>
-			<MenuBarItem Title="Edit" />
+			<MenuBarItem Title="Help" />
 		</MenuBar>
 
 		<StackPanel>
-			<TextBlock Text="test test" FontSize="64" />
+			<TextBlock Text="Uno Platform for macOS" FontSize="64" />
 			<Button Content="My Button" FontSize="64" />
 			<Slider />
 			<CheckBox Content="My Check"/>

@@ -8,10 +8,12 @@ using Windows.System;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 
 namespace Windows.UI.Xaml.Controls
 {
+	[ContentProperty(Name="Items")]
 	public  partial class MenuBarItem : Control
 	{
 		private readonly SerialDisposable _registrations = new SerialDisposable();

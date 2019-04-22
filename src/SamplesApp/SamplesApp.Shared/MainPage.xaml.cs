@@ -10,5 +10,10 @@ namespace SamplesApp
 			this.InitializeComponent();
 
 		}
+
+		public void OnQuit(object sender, object args)
+		{
+			System.Console.WriteLine("OnQuit");
+		}
 	}
 }

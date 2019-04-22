@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Input;
+using Uno.Client;
 using Windows.UI.Xaml;
 
 namespace Windows.UI.Xaml.Controls
@@ -57,7 +58,15 @@ namespace Windows.UI.Xaml.Controls
 				"Text", typeof(string),
 				typeof(global::Windows.UI.Xaml.Controls.MenuFlyoutItem),
 				new FrameworkPropertyMetadata(default(string)));
-		
+
 		#endregion
+
+		public event global::Windows.UI.Xaml.RoutedEventHandler Click;
+
+		internal void InvokeClick()
+		{
+			Click?.Invoke(this, RoutedEventArgs.Empty);
+			Command.ExecuteIfPossible();
+		}
 	}
 }
