@@ -25,7 +25,7 @@ jobs:
       msbuildLocationMethod: version
       msbuildVersion: latest
       msbuildArchitecture: x86
-      msbuildArguments: /r /p:Configuration=Release /p:Platform=iPhone /detailedsummary /bl:$(build.artifactstagingdirectory)/build-ios.binlog
+      msbuildArguments: /r /p:Configuration=Release /p:SampleAppPlatform=iPhone /detailedsummary /bl:$(build.artifactstagingdirectory)/build-ios.binlog
       clean: false
       maximumCpuCount: true
       restoreNugetPackages: false
