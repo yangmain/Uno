@@ -1,5 +1,5 @@
 jobs:
-- job: macOS
+- job: iOS
   variables:
     CI_Build: true
     SourceLinkEnabled: false
