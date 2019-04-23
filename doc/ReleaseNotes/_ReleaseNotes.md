@@ -40,6 +40,9 @@
 * [Wasm] Add NativeXXX styles (which are aliases to the XamlXXX styles)
 * [Wasm] Enable persistence for all ApplicationData folders
 * [Wasm] Add Samples App UI Screenshots diffing tool with previous builds
+* MenuBar
+    - Import of MenuBar code, not functional yet as MenuItemFlyout (Issue #801)
+    - Basic support for macOS native system menus
 
 ### Breaking Changes
 * The `WebAssemblyRuntime.InvokeJSUnmarshalled` method with three parameters has been removed.
