@@ -79,8 +79,6 @@
 * 151547 Fix animation not applied correctly within transformed hierarchy
 * Setting the `.SelectedValue` on a `Selector` now update the selection and the index
 * [WASM] Fix ListView contents not remeasuring when ItemsSource changes.
-* 151282 [iOS] Fixed Slider not responding on second navigation, fixed RemoveHandler for RoutedEvents removing all instances of handler
-* 151497 [iOS/Android] Fixed Slider not responding, by ^ RemoveHandler fix for RoutedEvents
 
 ## Release 1.44.0
 
