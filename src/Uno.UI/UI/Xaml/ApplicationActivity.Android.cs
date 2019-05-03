@@ -111,7 +111,18 @@ namespace Windows.UI.Xaml
 
 			LayoutProvider = new LayoutProvider(this);
 			LayoutProvider.LayoutChanged += OnLayoutChanged;
+			LayoutProvider.InsetsChanged += OnInsetsChanged;
 			RaiseConfigurationChanges();
+		}
+
+		private void OnInsetsChanged(Thickness insets)
+		{
+			if(Xaml.Window.Current != null)
+			{
+				//Set insets before raising the size changed event
+				Xaml.Window.Current.Insets = insets;
+				Xaml.Window.Current?.RaiseNativeSizeChanged();
+			}
 		}
 
 		public override void SetContentView(View view)

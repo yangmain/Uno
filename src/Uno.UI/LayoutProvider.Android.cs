@@ -8,6 +8,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Windows.Foundation;
+using Windows.UI.Xaml;
 using Rect = Android.Graphics.Rect;
 
 namespace Uno.UI
@@ -15,9 +16,12 @@ namespace Uno.UI
 	internal class LayoutProvider
 	{
 		public delegate void LayoutChangedListener(Rect statusBar, Rect keyboard, Rect navigationBar);
+		public delegate void InsetsChangedListener(Thickness insets);
 
 		public event LayoutChangedListener LayoutChanged;
+		public event InsetsChangedListener InsetsChanged;
 
+		public Thickness Insets { get; internal set; } = new Thickness(0, 0, 0, 0);
 		public Rect StatusBarRect { get; private set; } = new Rect(0, 0, 0, 0);
 		public Rect KeyboardRect { get; private set; } = new Rect(0, 0, 0, 0);
 		public Rect NavigationBarRect { get; private set; } = new Rect(0, 0, 0, 0);
@@ -29,12 +33,12 @@ namespace Uno.UI
 		{
 			this._activity = activity;
 
-			_adjustNothingLayoutProvider = new GlobalLayoutProvider(activity, null)
+			_adjustNothingLayoutProvider = new GlobalLayoutProvider(activity, null, null)
 			{
 				SoftInputMode = SoftInput.AdjustNothing | SoftInput.StateUnchanged,
 				InputMethodMode = InputMethod.NotNeeded,
 			};
-			_adjustResizeLayoutProvider = new GlobalLayoutProvider(activity, MeasureLayout)
+			_adjustResizeLayoutProvider = new GlobalLayoutProvider(activity, MeasureLayout, MeasureInsets)
 			{
 				SoftInputMode = SoftInput.AdjustResize | SoftInput.StateUnchanged,
 				InputMethodMode = InputMethod.Needed,
@@ -50,6 +54,7 @@ namespace Uno.UI
 				_adjustResizeLayoutProvider.Start(view);
 			}
 		}
+
 		internal void Stop()
 		{
 			_adjustNothingLayoutProvider.Stop();
@@ -72,28 +77,45 @@ namespace Uno.UI
 			NavigationBarRect = new Rect(0, adjustNothingFrame.Bottom, realMetrics.WidthPixels, realMetrics.HeightPixels);
 
 			LayoutChanged?.Invoke(StatusBarRect, KeyboardRect, NavigationBarRect);
-
-			T Get<T>(Action<T> getter) where T : new()
-			{
-				var result = new T();
-				getter(result);
-
-				return result;
-			}
 		}
 
+		private void MeasureInsets(PopupWindow sender, WindowInsets insets)
+		{
+#if __ANDROID_28__
+			var realMetrics = Get<DisplayMetrics>(_activity.WindowManager.DefaultDisplay.GetRealMetrics);
+			Insets = new Thickness(
+				insets.SystemWindowInsetLeft,
+				insets.SystemWindowInsetTop,
+				insets.SystemWindowInsetRight,
+				insets.SystemWindowInsetBottom
+			); ;
 
-		private class GlobalLayoutProvider : PopupWindow, ViewTreeObserver.IOnGlobalLayoutListener
+			InsetsChanged?.Invoke(Insets);
+#endif
+		}
+
+		T Get<T>(Action<T> getter) where T : new()
+		{
+			var result = new T();
+			getter(result);
+
+			return result;
+		}
+
+		private class GlobalLayoutProvider : PopupWindow, ViewTreeObserver.IOnGlobalLayoutListener, View.IOnApplyWindowInsetsListener
 		{
 			public delegate void GlobalLayoutListener(PopupWindow sender);
+			public delegate void WindowInsetsListener(PopupWindow sender, WindowInsets insets);
 
-			private readonly GlobalLayoutListener _listener;
+			private readonly GlobalLayoutListener _globalListener;
+			private readonly WindowInsetsListener _insetsListener;
 			private readonly Activity _activity;
 
-			public GlobalLayoutProvider(Activity activity, GlobalLayoutListener listener) : base(activity)
+			public GlobalLayoutProvider(Activity activity, GlobalLayoutListener globalListener, WindowInsetsListener insetsListener) : base(activity)
 			{
-				this._activity = activity;
-				this._listener = listener;
+				_activity = activity;
+				_globalListener = globalListener;
+				_insetsListener = insetsListener;
 
 				ContentView = new LinearLayout(_activity.BaseContext)
 				{
@@ -111,6 +133,7 @@ namespace Uno.UI
 				{
 					ShowAtLocation(view, GravityFlags.NoGravity, 0, 0);
 					ContentView.ViewTreeObserver.AddOnGlobalLayoutListener(this);
+					ContentView.SetOnApplyWindowInsetsListener(this);
 				}
 			}
 			public void Stop()
@@ -119,11 +142,19 @@ namespace Uno.UI
 				{
 					Dismiss();
 					ContentView.ViewTreeObserver.RemoveOnGlobalLayoutListener(this);
+					ContentView.SetOnApplyWindowInsetsListener(null);
 				}
 			}
 
 			// event hook
-			public void OnGlobalLayout() => _listener?.Invoke(this);
+			public void OnGlobalLayout() => _globalListener?.Invoke(this);
+
+			public WindowInsets OnApplyWindowInsets(View v, WindowInsets insets)
+			{
+				_insetsListener?.Invoke(this, insets);
+				// We need to consume insets here since we will handle them in the Window.Android.cs
+				return insets.ConsumeSystemWindowInsets();
+			}
 		}
 	}
 }

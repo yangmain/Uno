@@ -1,9 +1,9 @@
 #if XAMARIN_ANDROID
+using System;
 using Android.App;
 using Android.Util;
 using Android.Views;
 using Uno.UI;
-using Uno.UI.Controls;
 using Windows.Foundation;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -25,6 +25,8 @@ namespace Windows.UI.Xaml
 			CoreWindow = new CoreWindow();
 			InitializeCommon();
 		}
+
+		internal Thickness Insets { get; set; }
 
 		internal int SystemUiVisibility { get; set; }
 
@@ -86,11 +88,14 @@ namespace Windows.UI.Xaml
 			var statusBarHeightExcluded = GetLogicalStatusBarHeightExcluded();
 			var navigationBarHeightExcluded = GetLogicalNavigationBarHeightExcluded();
 
+			var topHeightExcluded = Math.Max(Insets.Top, statusBarHeightExcluded);
+			var bottomHeightExcluded = Math.Max(Insets.Bottom, navigationBarHeightExcluded);
+
 			var newVisibleBounds = new Rect(
-				x: newBounds.X,
-				y: newBounds.Y + statusBarHeightExcluded,
-				width: newBounds.Width,
-				height: newBounds.Height - statusBarHeightExcluded - navigationBarHeightExcluded
+				x: newBounds.X + Insets.Left,
+				y: newBounds.Y + topHeightExcluded,
+				width: newBounds.Width - (Insets.Left + Insets.Right),
+				height: newBounds.Height - topHeightExcluded - bottomHeightExcluded
 			);
 
 			ApplicationView.GetForCurrentView()?.SetVisibleBounds(newVisibleBounds);
