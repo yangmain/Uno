@@ -55,6 +55,12 @@ namespace Uno.UI
 			}
 		}
 
+		internal void StartListenInsets()
+		{
+			_adjustNothingLayoutProvider.StartListenInsets();
+			_adjustResizeLayoutProvider.StartListenInsets();
+		}
+
 		internal void Stop()
 		{
 			_adjustNothingLayoutProvider.Stop();
@@ -82,13 +88,12 @@ namespace Uno.UI
 		private void MeasureInsets(PopupWindow sender, WindowInsets insets)
 		{
 #if __ANDROID_28__
-			var realMetrics = Get<DisplayMetrics>(_activity.WindowManager.DefaultDisplay.GetRealMetrics);
 			Insets = new Thickness(
-				insets.SystemWindowInsetLeft,
-				insets.SystemWindowInsetTop,
-				insets.SystemWindowInsetRight,
-				insets.SystemWindowInsetBottom
-			); ;
+				ViewHelper.PhysicalToLogicalPixels(insets.SystemWindowInsetLeft),
+				ViewHelper.PhysicalToLogicalPixels(insets.SystemWindowInsetTop),
+				ViewHelper.PhysicalToLogicalPixels(insets.SystemWindowInsetRight),
+				ViewHelper.PhysicalToLogicalPixels(insets.SystemWindowInsetBottom)
+			);
 
 			InsetsChanged?.Invoke(Insets);
 #endif
@@ -133,16 +138,21 @@ namespace Uno.UI
 				{
 					ShowAtLocation(view, GravityFlags.NoGravity, 0, 0);
 					ContentView.ViewTreeObserver.AddOnGlobalLayoutListener(this);
-					ContentView.SetOnApplyWindowInsetsListener(this);
 				}
 			}
+
+			public void StartListenInsets()
+			{
+				_activity.Window.DecorView.SetOnApplyWindowInsetsListener(this);
+			}
+
 			public void Stop()
 			{
 				if (IsShowing)
 				{
 					Dismiss();
 					ContentView.ViewTreeObserver.RemoveOnGlobalLayoutListener(this);
-					ContentView.SetOnApplyWindowInsetsListener(null);
+					_activity.Window.DecorView.SetOnApplyWindowInsetsListener(null);
 				}
 			}
 

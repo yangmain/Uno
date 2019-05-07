@@ -27,7 +27,6 @@ namespace Windows.UI.Xaml
 
 		private InputPane _inputPane;
 
-
 		public ApplicationActivity(IntPtr ptr, Android.Runtime.JniHandleOwnership owner) : base(ptr, owner)
 		{
 			Initialize();
@@ -63,7 +62,7 @@ namespace Windows.UI.Xaml
 				// using either SoftInput.AdjustResize or SoftInput.AdjustPan.
 				args.EnsuredFocusedElementInView = true;
 			}
-		} 
+		}
 
 		protected override void InitializeComponent()
 		{
@@ -112,12 +111,16 @@ namespace Windows.UI.Xaml
 			LayoutProvider = new LayoutProvider(this);
 			LayoutProvider.LayoutChanged += OnLayoutChanged;
 			LayoutProvider.InsetsChanged += OnInsetsChanged;
+
+			// We need to start listening insets as soon as we can since it is raised only once the DecorView is set
+			LayoutProvider.StartListenInsets();
+
 			RaiseConfigurationChanges();
 		}
 
 		private void OnInsetsChanged(Thickness insets)
 		{
-			if(Xaml.Window.Current != null)
+			if (Xaml.Window.Current != null)
 			{
 				//Set insets before raising the size changed event
 				Xaml.Window.Current.Insets = insets;
